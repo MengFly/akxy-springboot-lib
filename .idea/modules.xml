@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/akxy-springboot-lib.iml" filepath="$PROJECT_DIR$/.idea/akxy-springboot-lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/autocheck/autocheck.iml" filepath="$PROJECT_DIR$/autocheck/autocheck.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dynamic-db/dynamic-db.iml" filepath="$PROJECT_DIR$/dynamic-db/dynamic-db.iml" />
+    </modules>
+  </component>
+</project>
