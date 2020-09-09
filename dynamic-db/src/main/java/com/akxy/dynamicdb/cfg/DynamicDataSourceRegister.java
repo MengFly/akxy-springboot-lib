@@ -116,10 +116,9 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
      * 为DataSource绑定更多属性
      */
     private void bindData(DataSource dataSource) {
-
+        DataBinder dataBinder = new DataBinder(dataSource);
         if (dataSourcePropertyValues == null) {
             Map map = binder.bind("datasource.global", Map.class).get();
-            DataBinder dataBinder = new DataBinder(dataSource);
             // 排除已经设置的属性
             map.remove("type");
             map.remove("driver-class-name");
@@ -127,8 +126,8 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
             map.remove("username");
             map.remove("password");
             dataSourcePropertyValues = new MutablePropertyValues(map);
-            dataBinder.bind(dataSourcePropertyValues);
         }
+        dataBinder.bind(dataSourcePropertyValues);
     }
 
     /**
