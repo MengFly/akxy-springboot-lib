@@ -1,5 +1,12 @@
 ## dynamic-db
 
+### pom.xml
+```xml
+<groupId>com.akxy</groupId>
+   <artifactId>dynamic-db</artifactId>
+<version>1.1</version>
+```
+
 为将dynamic-db中的配置生效，需要将包名配置到Applicaiton类中。以及import多数据源的注册类
 
 ```java
@@ -91,3 +98,6 @@ datasource.global.removeAbandonedTimeout=180
 datasource.global.maxWait=1000
   ```
 
+### Change logs
+V1.1
++ 添加多数据库数据库标识对大写字符的支持
