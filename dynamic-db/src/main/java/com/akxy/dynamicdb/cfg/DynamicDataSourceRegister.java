@@ -140,7 +140,9 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
         }
         String dataSourceSplitRegex = ",";
         for (String dsName : dataSources.split(dataSourceSplitRegex)) {
-            Map<String, Object> properties = binder.bind("custom.datasource." + dsName, Map.class).get();
+            String customName = "custom.datasource." + dsName.toLowerCase();
+            Map<String, Object> properties =
+                    binder.bind(customName, Map.class).get();
             DataSource dataSource = buildDataSource(properties);
             customDataSources.put(dsName, dataSource);
             bindData(dataSource);
