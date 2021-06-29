@@ -1,17 +1,16 @@
 package com.akxy.dynamicdb.cfg;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author wangp
  */
-@Slf4j
 public class DynamicDataSourceContextHolder {
     private static final ThreadLocal<String> CONTEXT_HOLDER = new ThreadLocal<>();
     private static final List<String> DATA_SOURCE_NAMES = new ArrayList<>(6);
+
+
 
     private DynamicDataSourceContextHolder() {
     }

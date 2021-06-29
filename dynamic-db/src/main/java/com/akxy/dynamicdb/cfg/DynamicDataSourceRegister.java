@@ -1,8 +1,5 @@
 package com.akxy.dynamicdb.cfg;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +12,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,25 +32,15 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked", "unused"})
 @Configuration
 @Component
-@Slf4j
 public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar, EnvironmentAware {
     /**
      * 默认的数据源类型
      */
-    private static final String DEFAULT_DATASOUCE_TYPE = "org.apache.tomcat.jdbc.pool.DataSource";
+    private static final String DEFAULT_DATASOURCE_TYPE = "org.apache.tomcat.jdbc.pool.DataSource";
     /**
      * 默认数据源
      */
     private DataSource defaultDataSource;
-
-    @Value("${dynamic.db.sqlCostWarn.enable:false}")
-    public Boolean sqlWarnEnable;
-    @Value("${dynamic.db.sqlCostWarn.countLimit:5000}")
-    public Integer dynamicCountLimit;
-    @Value("${dynamic.db.sqlCostWarn.secondLimit:5}")
-    public Integer dynamicSecondLimit;
-    @Value("${dynamic.db.entity.package}")
-    public String dynamicEntityPackage;
 
     @Value("${spring.datasource.names}")
     public String mainDb;
@@ -96,7 +81,7 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
      */
     private DataSource buildDataSource(Map<String, Object> dataSourceMap) {
         Object type = dataSourceMap.get("type");
-        type = type == null ? DEFAULT_DATASOUCE_TYPE : type;
+        type = type == null ? DEFAULT_DATASOURCE_TYPE : type;
         try {
             //noinspection unchecked
             Class<? extends DataSource> dataSourceType = (Class<? extends DataSource>) Class.forName(type.toString());
@@ -107,7 +92,7 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
             return DataSourceBuilder.create().type(dataSourceType).driverClassName(driverClassName).url(url)
                     .username(username).password(password).build();
         } catch (ClassNotFoundException e) {
-            log.error("创建数据源失败：{}", e.getMessage());
+//            log.error("创建数据源失败：{}", e.getMessage());
             return null;
         }
     }
@@ -168,24 +153,6 @@ public class DynamicDataSourceRegister implements ImportBeanDefinitionRegistrar,
         propertyValues.addPropertyValue("targetDataSources", targetDataSources);
 
         registry.registerBeanDefinition("dataSource", beanDefinition);
-    }
-
-    /**
-     * 根据数据源创建SqlSessionFactory
-     */
-    @Bean
-    public SqlSessionFactory sqlSessionFactory(DynamicDataSource ds) throws Exception {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
-        // 指定数据源(这个必须有，否则报错)
-        fb.setDataSource(ds);
-        if (sqlWarnEnable) {
-            fb.setPlugins(new SqlCheckInterceptor(dynamicCountLimit, dynamicSecondLimit));
-        }
-        // 指定基包
-        fb.setTypeAliasesPackage(dynamicEntityPackage);
-        fb.setMapperLocations(resolver.getResources("classpath:mapper/**/*.xml"));
-        return fb.getObject();
     }
 
     /**
